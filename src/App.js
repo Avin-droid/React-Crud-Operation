@@ -1,23 +1,41 @@
-import logo from './logo.svg';
+
 import './App.css';
+import axios from 'axios';
+import { useState,useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Dashboard from './components/Dashboard'
+import AddStudent from './components/AddStudent'
+import UpdateStudent from './components/UpdateStudent'
+import Studentlist from './components/Studentlist';
+
 
 function App() {
+  let [student,setStudent]=useState([])
+  useEffect(()=>{
+    axios.get('http://localhost:4564/api/students')
+    .then((response)=>{
+      console.log(response.data)
+      setStudent(response.data)
+    }).catch((error)=>{
+      console.log(error)
+    })
+    
+  },[])
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Router>
+        <Routes>
+          <Route path='/' element={<Dashboard student={student} setStudent={setStudent}></Dashboard>}></Route>
+
+          <Route path='/AddNew' element={<AddStudent student={student} setStudent={setStudent}></AddStudent>}></Route>
+
+          <Route path='/List' element={<Studentlist student={student} setStudent={setStudent}></Studentlist>}></Route>
+
+          <Route path='/Edit/:id' element={<UpdateStudent student={student} setStudent={setStudent}></UpdateStudent>}></Route>
+        </Routes>
+      </Router>
+
+      
     </div>
   );
 }
